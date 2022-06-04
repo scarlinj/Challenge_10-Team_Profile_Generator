@@ -1,36 +1,15 @@
 const Intern = require('../lib/Intern.js');
 
 
-test("Create school?", () => {
-    const schoolTest = "scarlinj";
-    const employeeInstance = new Intern(
-      "Stephen",
-      2,
-      "scarlinj@gmail.com",
-      schoolTest
-    );
-    expect(employeeInstance.school).toBe(schoolTest);
-  });
-  
-  test("Will schoolTest return school?", () => {
-    const schoolTest = "Name of school";
-    const employeeInstance = new Intern(
-      "Stephen",
-      2,
-      "scarlinj@gmail.com",
-      schoolTest
-    );
-    expect(employeeInstance.getGithub()).toBe(githubTest);
-  });
+describe("Intern", () => {
+    describe("Check intern class", () => {
+        it("This should return intern name, id, email, school", () => {
+            const george = new Intern('George', '1', 'georgeOfTheJungle@gmail.com', 'Berkeley');
 
-//    follow same structure as Manager and Engineer
-  test("Test role.", () => {
-    const returnRole = "Intern";
-    const employeeInstance = new Intern(
-      "Stephen",
-      2,
-      "scarlinj@gmail.com",
-      "scarlinj"
-    );
-    expect(employeeInstance.getRole()).toBe(returnRole);
-  });
+            expect(george.getName()).toEqual('George');
+            expect(george.getId()).toEqual('1');
+            expect(george.getEmail()).toEqual('georgeOfTheJungle@gmail.com');
+            expect(george.getSchool()).toEqual('Berkeley');
+        });
+    });
+});
