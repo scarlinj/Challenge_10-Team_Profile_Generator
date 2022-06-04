@@ -6,7 +6,7 @@ Welcome to the Tem Profile Generator App!  Use this app to input information abo
 
 To test: Use "npm run test" from the base folder to run each test in the "_tests_" folder.  This ensures the files work appropriately.
 
-To use: Use "node index.js" to run the file from index.js
+To use: Use "node index.js" to run the file from index.js.  This will prompt a series of questions to answer in order to fill out information about your team.
 
 ## Walkthrough Video
 
