@@ -1,5 +1,5 @@
 const fs = require('fs');
-const profile = require('../indexls.js');
+const profile = require('../index.js');
 
 // create the about section
 const generateAbout = aboutText => {

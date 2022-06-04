@@ -1,7 +1,15 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
-const generatePage = require('./src/page-template.js');
+const generatePage = require('./src/page-template');
+const path = require("path");
+const Manager = require("./lib/Manager");
+const Engineer = require("./lib/Engineer");
+const Intern = require("./lib/Intern");
+const output_dir = path.resolve(__dirname, "output");
+const pathOutPut = path.join(output_dir, "team.html"); //path for url/html
+const generatedTeam = require("./src/page-template.js"); //path to template for html
 
+teamArray = [];
 
 const promptUser = () => {
     return inquirer.prompt([{
@@ -18,22 +26,22 @@ const promptUser = () => {
             }
         }, {
             type: 'input',
-            name: 'Github',
-            message: 'Enter your e-mail address'
+            name: 'managerMName',
+            message: 'Enter the manager name.'
         }, {
             type: 'input',
-            name: 'Github',
-            message: 'Enter your GitHub Username'
+            name: 'managerId',
+            message: 'Enter the manager ID.'
         },
         {
             type: 'confirm',
-            name: 'confirmAbout',
-            message: 'Would you like to enter some information about yourself for an "About" section?',
+            name: 'managerEmail',
+            message: 'Enter the manager e-mail.',
             default: true
         }, {
             type: 'input',
-            name: 'about',
-            message: 'Provide some information about yourself:',
+            name: 'managerOfficeNumber',
+            message: 'Enter the manager office number.',
             when: ({
                 confirmAbout
             }) => {
@@ -48,60 +56,60 @@ const promptUser = () => {
 };
 
 
-const promptProject = portfolioData => {
-    console.log(`
-=================
-Add a New Project
-=================
-`);
-    // If there's no 'projects' array property, create one
-    if (!portfolioData.projects) {
-        portfolioData.projects = [];
-    }
-    return inquirer
-        .prompt([{
-                type: 'input',
-                name: 'Project name',
-                message: 'What is the name of your project?'
-            },
-            {
-                type: 'input',
-                name: 'Project description',
-                message: 'Provide a description of the project (Required)'
-            },
-            {
-                type: 'checkbox',
-                name: 'languages',
-                message: 'What did you build this project with? (Check all that apply)',
-                choices: ['JavaScript', 'HTML', 'CSS', 'ES6', 'jQuery', 'Bootstrap', 'Node']
-            },
-            {
-                type: 'input',
-                name: 'Project Github link',
-                message: 'Enter the GitHub link to your project. (Required)'
-            },
-            {
-                type: 'confirm',
-                name: 'feature',
-                message: 'Would you like to feature this project?',
-                default: false
-            },
-            {
-                type: 'confirm',
-                name: 'confirmAddProject',
-                message: 'Would you like to enter another project?',
-                default: false
-            }
-        ])
-        .then(projectData => {
-            portfolioData.projects.push(projectData);
-            if (projectData.confirmAddProject) {
-                return promptProject(portfolioData);
-            } else {
-                return portfolioData;
-            }
-        });
-};
+// const promptProject = portfolioData => {
+//     console.log(`
+// =================
+// Add a New Project
+// =================
+// `);
+//     // If there's no 'projects' array property, create one
+//     if (!portfolioData.projects) {
+//         portfolioData.projects = [];
+//     }
+//     return inquirer
+//         .prompt([{
+//                 type: 'input',
+//                 name: 'Project name',
+//                 message: 'What is the name of your project?'
+//             },
+//             {
+//                 type: 'input',
+//                 name: 'Project description',
+//                 message: 'Provide a description of the project (Required)'
+//             },
+//             {
+//                 type: 'checkbox',
+//                 name: 'languages',
+//                 message: 'What did you build this project with? (Check all that apply)',
+//                 choices: ['JavaScript', 'HTML', 'CSS', 'ES6', 'jQuery', 'Bootstrap', 'Node']
+//             },
+//             {
+//                 type: 'input',
+//                 name: 'Project Github link',
+//                 message: 'Enter the GitHub link to your project. (Required)'
+//             },
+//             {
+//                 type: 'confirm',
+//                 name: 'feature',
+//                 message: 'Would you like to feature this project?',
+//                 default: false
+//             },
+//             {
+//                 type: 'confirm',
+//                 name: 'confirmAddProject',
+//                 message: 'Would you like to enter another project?',
+//                 default: false
+//             }
+//         ])
+//         .then(projectData => {
+//             portfolioData.projects.push(projectData);
+//             if (projectData.confirmAddProject) {
+//                 return promptProject(portfolioData);
+//             } else {
+//                 return portfolioData;
+//             }
+//         });
+// };
 
 promptUser()
     // .then(answers => console.log(answers))
@@ -123,3 +131,10 @@ promptUser()
             });
         });
     });
+
+    
+function htmlBuilder(teamArray) {
+    fs.writeFileSync(pathOutPut, generatedTeam(teamArray), "utf-8");
+    console.log("Your team has been created!");
+  }
+  
