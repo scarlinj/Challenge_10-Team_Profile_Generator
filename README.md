@@ -12,4 +12,4 @@ To use: Use "node index.js" to run the file from index.js.  This will prompt a s
 
 You can find a walkthrough video demonstrating this application at the below link:
 
-https://drive.google.com/file/d/1T_zYtVuffSdsWm0l33pwApH1ue5pG3Oi/view
+https://drive.google.com/file/d/1T_zYtVuffSdsWm0l33pwApH1ue5pG3Oi/view?usp=sharing
