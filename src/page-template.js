@@ -1,138 +1,111 @@
-const fs = require('fs');
-const profile = require('../index.js');
-
-// create the about section
-const generateAbout = aboutText => {
-  if (!aboutText) {
-    return '';
-  }
-
-  return `
-    <section class="my-3" id="about">
-      <h2 class="text-dark bg-primary p-2 display-inline-block">About Me</h2>
-      <p>${aboutText}</p>
-    </section>
-  `;
-};
-
-const generateProfile = projectsArr => {
-  // get array of just featured projects
-  const featuredProjects = projectsArr.filter(project => {
-    if (project.feature) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-
-  // get array of all non-featured projects
-  const nonFeaturedProjects = projectsArr.filter(project => {
-    if (!project.feature) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-
-  const featuredProjectHtmlArr = featuredProjects.map(({
-    name,
-    description,
-    languages,
-    link
-  }) => {
-    return `
-      <div class="col-12 mb-2 bg-dark text-light p-3 flex-column">
-        <h3 class="portfolio-item-title text-light">${name}</h3>
-        <h5 class="portfolio-languages">
-          Built With:
-          ${languages.join(', ')}
-        </h5>
-        <p>${description}</p>
-        <a href="${link}" class="btn mt-auto"><i class="fab fa-github mr-2"></i>View Project on GitHub</a>
-      </div>
-    `;
-  });
-
-  const nonFeaturedProjectHtmlArr = nonFeaturedProjects.map(
-    ({
-      name,
-      description,
-      languages,
-      link
-    }) => {
-      return `
-        <div class="col-12 col-md-6 mb-2 bg-dark text-light p-3 flex-column">
-          <h3 class="portfolio-item-title text-light">${name}</h3>
-          <h5 class="portfolio-languages">
-            Built With:
-            ${languages.join(', ')}
-          </h5>
-          <p>${description}</p>
-          <a href="${link}" class="btn mt-auto"><i class="fab fa-github mr-2"></i>View Project on GitHub</a>
-        </div>
-      `;
-    }
-  );
-
-  return `
-    <section class="my-3" id="portfolio">
-      <h2 class="text-dark bg-primary p-2 display-inline-block">Work</h2>
-      <div class="flex-row justify-space-between">
-      ${featuredProjectHtmlArr.join('')}
-      ${nonFeaturedProjectHtmlArr.join('')}
-      </div>
-    </section>
-  `;
-};
-
-module.exports = templateData => {
-  // console.log(templateData);
-
-  // destructure projects and about data from templateData based on their property key names
-  // this will create three variables based on data in templateData
-  const {
-    projects,
-    about,
-    ...header
-  } = templateData;
-
-  console.log(projects);
-  console.log(about);
-  console.log(header);
+const generatePage= () => {
 
   return `
   <!DOCTYPE html>
   <html lang="en">
-
   <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Portfolio Demo</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css?family=Public+Sans:300i,300,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-  <header>
-    <div class="container flex-row justify-space-between align-center py-3">
-      <h1 class="page-title text-secondary bg-dark py-2 px-3">${header.name}</h1>
-      <nav class="flex-row">
-        <a class="ml-2 my-1 px-2 py-1 bg-secondary text-dark" href="https://github.com/${
-          header.github
-        }">GitHub</a>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>My Team Members</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+      <link rel="stylesheet" href="./css.css">
+  </head>
+  
+  <body>
+  
+      <nav class="navbar navbar-light bg-danger p-5">
+          <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1 text-white">My Team</span>
+          </div>
       </nav>
-    </div>
-  </header>
-  <main class="container my-5">
-    ${generateAbout(about)}
-    ${generateProfile(projects)}
-  </main>
-  <footer class="container text-center py-3">
-    <h3 class="text-dark">&copy; ${new Date().getFullYear()} by ${header.name}</h3>
-  </footer>
-</body>
-</html>
-`;
+  
+  
+      <div class="container-xl m-2 d-flex">
+  `
 };
+
+//  no need for generateEmployee, since manager, intern and engineer all derivce from Employee.js
+
+const generateEmployee = (employee) => {
+
+  return `
+  <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">${employee.getName()}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">${employee.getRole()}</h6>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Id : ${employee.getId()}</li>
+      <li class="list-group-item">Email : ${employee.getEmail()}</li>
+    </ul>
+  </div>
+  </div>
+  `
+};
+
+const generateManager = (manager) => {
+
+    return `
+    <div class="card" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">${manager.getName()}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">${manager.getRole()}</h6>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Id : ${manager.getId()}</li>
+        <li class="list-group-item">Email : ${manager.getEmail()}</li>
+        <li class="list-group-item">Office number: ${manager.getOfficeNumber()}</li>
+      </ul>
+    </div>
+    </div>
+    `
+};
+
+const generateEngineer = (Engineer) => {
+    return `
+  
+  <div class="card" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">${Engineer.getName()}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">${Engineer.getRole()}</h6>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Id : ${Engineer.getId()}</li>
+        <li class="list-group-item">Email : ${Engineer.getEmail()}</li>
+        <li class="list-group-item">GitHub: ${Engineer.getGithub()}</li>
+      </ul>
+    </div>
+  </div>
+  
+  
+  `
+}
+
+const generateIntern = (Intern) => {
+
+  return `
+  
+  
+  <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">${Intern.getName()}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">${Intern.getRole()}</h6>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Id : ${Intern.getId()}</li>
+      <li class="list-group-item">Email : ${Intern.getEmail()}</li>
+      <li class="list-group-item">School: ${Intern.getSchool()}</li>
+    </ul>
+  </div>
+  </div>
+  
+  `
+}
+
+const closingHTML = () => {
+  return `
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  
+  </body>
+  </html>`
+
+}
+
+module.exports = {generatePage, generateEmployee, generateEngineer, generateIntern, generateManager, closingHTML}

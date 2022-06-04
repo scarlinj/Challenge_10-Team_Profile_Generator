@@ -1,140 +1,218 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
-const generatePage = require('./src/page-template');
-const path = require("path");
-const Manager = require("./lib/Manager");
-const Engineer = require("./lib/Engineer");
-const Intern = require("./lib/Intern");
-const output_dir = path.resolve(__dirname, "output");
-const pathOutPut = path.join(output_dir, "team.html"); //path for url/html
-const generatedTeam = require("./src/page-template.js"); //path to template for html
+const PageTemplate = require('./src/page-template.js');
+const Manager = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Intern = require('./lib/intern');
 
-teamArray = [];
+// prompt questions 
 
-const promptUser = () => {
-    return inquirer.prompt([{
-            type: 'input',
-            name: 'name',
-            message: 'What is your name? (Required)',
-            validate: nameInput => {
-                if (nameInput) {
-                    return true;
-                } else {
-                    console.log('Please enter your name.');
-                    return false;
-                }
-            }
-        }, {
-            type: 'input',
-            name: 'managerMName',
-            message: 'Enter the manager name.'
-        }, {
-            type: 'input',
-            name: 'managerId',
-            message: 'Enter the manager ID.'
-        },
-        {
-            type: 'confirm',
-            name: 'managerEmail',
-            message: 'Enter the manager e-mail.',
-            default: true
-        }, {
-            type: 'input',
-            name: 'managerOfficeNumber',
-            message: 'Enter the manager office number.',
-            when: ({
-                confirmAbout
-            }) => {
-                if (confirmAbout) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+const managerQuestions = [
+    {
+        type: 'input',
+        message: "What is the team manager's name?",
+        name: 'name'
+    },
+    {
+        type: 'input',
+        message: "What is the team manager's id?",
+        name: 'id'
+    },
+    {
+        type: 'input',
+        message: "What is the team manager's email?",
+        name: 'email'
+    },
+    {
+        type: 'input',
+        message: "What is the team manager's office number?",
+        name: 'number'
+    },    
+    {
+        type: 'list',
+        message: "Which type of team member would you like to add?",
+        name: 'team',
+        choices: [
+            'Engineer',
+            'Intern',
+            'There is no one to add'
+          ]
+    }
+]
+
+const engineerQuestions = [
+    {
+        type: 'input',
+        message: "What is your engineer's name?",
+        name: 'name'
+    },
+    {
+        type: 'input',
+        message: "What is your engineer's id?",
+        name: 'id'
+    },
+    {
+        type: 'input',
+        message: "What is your engineer's email?",
+        name: 'email'
+    },
+    {
+        type: 'input',
+        message: "What is your engineer's Github username?",
+        name: 'github'
+    },    
+    {
+        type: 'list',
+        message: "Which type of team member would you like to add?",
+        name: 'team',
+        choices: [
+            'Engineer',
+            'Intern',
+            'There is no one to add'
+          ]
+    }
+]
+
+const internQuestions = [
+    {
+        type: 'input',
+        message: "What is your intern's name?",
+        name: 'name'
+    },
+    {
+        type: 'input',
+        message: "What is your intern's id?",
+        name: 'id'
+    },
+    {
+        type: 'input',
+        message: "What is your intern's email?",
+        name: 'email'
+    },
+    {
+        type: 'input',
+        message: "What school does your intern graduate?",
+        name: 'school'
+    },    
+    {
+        type: 'list',
+        message: "Which type of team member would you like to add?",
+        name: 'team',
+        choices: [
+            'Engineer',
+            'Intern',
+            'There is no one to add'
+          ]
+    }
+]
+
+
+// make prompt 
+
+const managerPrompt = () => {
+    writeStarting();
+    inquirer.prompt(managerQuestions)
+    .then((res) => {
+        const {name, id, email, number} = res;
+        const manager = new Manager(name, id, email, number);
+        writeManager(manager);
+    
+        // from here, will switch to the engineer, intern questions
+        switch(res.team) {
+            case 'Engineer': 
+                engineerPrompt();
+                break;
+            case 'Intern':
+                internPrompt();
+                break;
+            case 'There is no one to add':
+                closingToFile();
+                break;
         }
-    ]);
+        
+    })
+    };
+    
+const engineerPrompt = () => {
+    inquirer.prompt(engineerQuestions)
+    .then(res => {
+        const {name, id, email, github} = res;
+        const engineer = new Engineer(name, id, email, github);
+        writeEngineer(engineer);
+
+        switch(res.team) {
+            case 'Engineer': 
+                engineerPrompt();
+                break;
+            case 'Intern':
+                internPrompt();
+                break;
+            case 'There is no one to add':
+                closingToFile();
+                break;
+        }
+
+    })
+};
+
+const internPrompt = () => {
+    inquirer.prompt(internQuestions)
+    .then(res => {
+        const {name, id, email, school} = res;
+        const intern = new Intern(name, id, email, school);
+
+        writeIntern(intern);
+
+        switch(res.team) {
+            case 'Engineer': 
+                engineerPrompt();
+                break;
+            case 'Intern':
+                internPrompt();
+                break;
+            case 'There is no one to add':
+                closingToFile();
+                break;
+        }
+
+    })
 };
 
 
-// const promptProject = portfolioData => {
-//     console.log(`
-// =================
-// Add a New Project
-// =================
-// `);
-//     // If there's no 'projects' array property, create one
-//     if (!portfolioData.projects) {
-//         portfolioData.projects = [];
-//     }
-//     return inquirer
-//         .prompt([{
-//                 type: 'input',
-//                 name: 'Project name',
-//                 message: 'What is the name of your project?'
-//             },
-//             {
-//                 type: 'input',
-//                 name: 'Project description',
-//                 message: 'Provide a description of the project (Required)'
-//             },
-//             {
-//                 type: 'checkbox',
-//                 name: 'languages',
-//                 message: 'What did you build this project with? (Check all that apply)',
-//                 choices: ['JavaScript', 'HTML', 'CSS', 'ES6', 'jQuery', 'Bootstrap', 'Node']
-//             },
-//             {
-//                 type: 'input',
-//                 name: 'Project Github link',
-//                 message: 'Enter the GitHub link to your project. (Required)'
-//             },
-//             {
-//                 type: 'confirm',
-//                 name: 'feature',
-//                 message: 'Would you like to feature this project?',
-//                 default: false
-//             },
-//             {
-//                 type: 'confirm',
-//                 name: 'confirmAddProject',
-//                 message: 'Would you like to enter another project?',
-//                 default: false
-//             }
-//         ])
-//         .then(projectData => {
-//             portfolioData.projects.push(projectData);
-//             if (projectData.confirmAddProject) {
-//                 return promptProject(portfolioData);
-//             } else {
-//                 return portfolioData;
-//             }
-//         });
-// };
+// write to file
 
-promptUser()
-    // .then(answers => console.log(answers))
-    .then(promptProject)
-    .then(portfolioData => {
-        const pageHTML = generatePage(portfolioData);
 
-        fs.writeFile('./dist/index.html', pageHTML, err => {
-            if (err) throw new Error(err);
+const writeStarting = () => {
+    fs.appendFile('./dist/index.html', PageTemplate.generatePage(), (err) => 
+    err? console.error(err) : console.log('Start to make your team!')
+    )
+}
 
-            console.log('Page created! Check out index.html in this directory to see it!');
+const writeManager = (employees) => {
+    fs.appendFile('./dist/index.html', PageTemplate.generateManager(employees), (err) => 
+    err? console.error(err) : console.log('success to add')
+    )
+}
 
-            fs.copyFile('./src/style.css', './dist/style.css', err => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                console.log('Style sheet copied successfully!');
-            });
-        });
-    });
+const writeEngineer = (employees) => {
+    fs.appendFile('./dist/index.html', PageTemplate.generateEngineer(employees), (err) => 
+    err? console.error(err) : console.log('success to add')
+    )
+}
 
-    
-function htmlBuilder(teamArray) {
-    fs.writeFileSync(pathOutPut, generatedTeam(teamArray), "utf-8");
-    console.log("Your team has been created!");
-  }
-  
+const writeIntern = (employees) => {
+    fs.appendFile('./dist/index.html', PageTemplate.generateIntern(employees), (err) => 
+    err? console.error(err) : console.log('success to add')
+    )
+}
+
+const closingToFile = () => {
+    fs.appendFile('./dist/index.html', PageTemplate.closingHTML(), (err) => 
+    err? console.error(err) : console.log('All done! See the created file')
+    )
+}
+
+
+// run the code
+
+managerPrompt();
