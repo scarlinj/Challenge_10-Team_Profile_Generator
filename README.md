@@ -2,7 +2,7 @@
 
 Welcome to the Tem Profile Generator App!  Use this app to input information about each of your team members and save that input into a file.  You can add team members with different roles within a team - interns, engineers, and your manager.  Once you complete the question for an individual team member, you can add another team member or choose to finish the process.  After you finish the process, the program generates an index.html file that contains the answers for each prompt.
 
-# Using this application
+## Using this application
 
 To test: Use "npm run test" from the base folder to run each test in the "_tests_" folder.  This ensures the files work appropriately.
 
